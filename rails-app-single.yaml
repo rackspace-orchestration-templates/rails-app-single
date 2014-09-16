@@ -266,6 +266,7 @@ resources:
           git_url: { get_param: app_git_url }
           git_revision: { get_param: app_git_revision }
           git_deploy_key: { get_param: app_git_deploy_key }
+          additional_packages: { get_param: additional_packages }
           db:
             type: { get_param: rails_db_type }
             hostname: 'localhost'
