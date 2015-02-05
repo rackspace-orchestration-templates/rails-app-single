@@ -2,6 +2,7 @@ import re
 from fabric.api import env, run, hide, task
 from envassert import detect, file, group, package, port, process, service, \
     user
+from hot.utils.test import get_artifacts, http_check
 
 
 def app_is_responding():
@@ -35,3 +36,9 @@ def check():
     assert service.is_enabled('unicorn'), 'unicorn service not enabled'
 
     assert app_is_responding(), 'Rails app did not respond as expected.'
+
+
+@task
+def artifacts():
+    env.platform_family = detect.detect()
+    get_artifacts()
