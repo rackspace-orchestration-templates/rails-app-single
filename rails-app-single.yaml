@@ -240,7 +240,7 @@ resources:
 
   # Server resources
   rails_server:
-    type: "Rackspace::Cloud::Server"
+    type: "OS::Nova::Server"
     properties:
       name: rails
       flavor: { get_param: flavor }
