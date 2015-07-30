@@ -9,10 +9,7 @@ reach-info:
 hidden_outputs:
   - private_key
 abstract: |
-  Single Linux server running [Rails](http://rubyonrails.org/) and [MySQL
-  5.5](http://www.mysql.com/) or [Postgres 9.1](http://www.postgresql.org/).
-
-  This deployment is intended for development and testing scenarios.
+  Rails is a popular open-source web development framework for Ruby developers.
 instructions: |
   #### Getting started
 
