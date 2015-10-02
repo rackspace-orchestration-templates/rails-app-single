@@ -1,9 +1,10 @@
 {
   "name": "nginx",
+  "version": "2.7.4",
   "description": "Installs and configures nginx",
   "long_description": "",
-  "maintainer": "Chef Software, Inc.",
-  "maintainer_email": "cookbooks@chef.io",
+  "maintainer": "Opscode, Inc.",
+  "maintainer_email": "cookbooks@opscode.com",
   "license": "Apache 2.0",
   "platforms": {
     "amazon": ">= 0.0.0",
@@ -24,132 +25,55 @@
     "yum-epel": "~> 0.3"
   },
   "recommendations": {
-
   },
   "suggestions": {
-
   },
   "conflicting": {
-
   },
   "providing": {
-
   },
   "replacing": {
-
   },
   "attributes": {
     "nginx/dir": {
       "display_name": "Nginx Directory",
       "description": "Location of nginx configuration files",
-      "default": "/etc/nginx",
-      "choice": [
-
-      ],
-      "calculated": false,
-      "type": "string",
-      "required": "optional",
-      "recipes": [
-
-      ]
+      "default": "/etc/nginx"
     },
     "nginx/log_dir": {
       "display_name": "Nginx Log Directory",
       "description": "Location for nginx logs",
-      "default": "/var/log/nginx",
-      "choice": [
-
-      ],
-      "calculated": false,
-      "type": "string",
-      "required": "optional",
-      "recipes": [
-
-      ]
+      "default": "/var/log/nginx"
     },
     "nginx/user": {
       "display_name": "Nginx User",
       "description": "User nginx will run as",
-      "default": "www-data",
-      "choice": [
-
-      ],
-      "calculated": false,
-      "type": "string",
-      "required": "optional",
-      "recipes": [
-
-      ]
+      "default": "www-data"
     },
     "nginx/binary": {
       "display_name": "Nginx Binary",
       "description": "Location of the nginx server binary",
-      "default": "/usr/sbin/nginx",
-      "choice": [
-
-      ],
-      "calculated": false,
-      "type": "string",
-      "required": "optional",
-      "recipes": [
-
-      ]
+      "default": "/usr/sbin/nginx"
     },
     "nginx/gzip": {
       "display_name": "Nginx Gzip",
       "description": "Whether gzip is enabled",
-      "default": "on",
-      "choice": [
-
-      ],
-      "calculated": false,
-      "type": "string",
-      "required": "optional",
-      "recipes": [
-
-      ]
+      "default": "on"
     },
     "nginx/gzip_http_version": {
       "display_name": "Nginx Gzip HTTP Version",
       "description": "Version of HTTP Gzip",
-      "default": "1.0",
-      "choice": [
-
-      ],
-      "calculated": false,
-      "type": "string",
-      "required": "optional",
-      "recipes": [
-
-      ]
+      "default": "1.0"
     },
     "nginx/gzip_comp_level": {
       "display_name": "Nginx Gzip Compression Level",
       "description": "Amount of compression to use",
-      "default": "2",
-      "choice": [
-
-      ],
-      "calculated": false,
-      "type": "string",
-      "required": "optional",
-      "recipes": [
-
-      ]
+      "default": "2"
     },
     "nginx/gzip_proxied": {
       "display_name": "Nginx Gzip Proxied",
       "description": "Whether gzip is proxied",
-      "default": "any",
-      "choice": [
-
-      ],
-      "calculated": false,
-      "type": "string",
-      "required": "optional",
-      "recipes": [
-
-      ]
+      "default": "any"
     },
     "nginx/gzip_types": {
       "display_name": "Nginx Gzip Types",
@@ -165,187 +89,57 @@
         "text/javascript",
         "application/javascript",
         "application/json"
-      ],
-      "choice": [
-
-      ],
-      "calculated": false,
-      "required": "optional",
-      "recipes": [
-
       ]
     },
     "nginx/keepalive": {
       "display_name": "Nginx Keepalive",
       "description": "Whether to enable keepalive",
-      "default": "on",
-      "choice": [
-
-      ],
-      "calculated": false,
-      "type": "string",
-      "required": "optional",
-      "recipes": [
-
-      ]
+      "default": "on"
     },
     "nginx/keepalive_timeout": {
       "display_name": "Nginx Keepalive Timeout",
-      "default": "65",
-      "choice": [
-
-      ],
-      "calculated": false,
-      "type": "string",
-      "required": "optional",
-      "recipes": [
-
-      ]
+      "default": "65"
     },
     "nginx/worker_processes": {
       "display_name": "Nginx Worker Processes",
       "description": "Number of worker processes",
-      "default": "1",
-      "choice": [
-
-      ],
-      "calculated": false,
-      "type": "string",
-      "required": "optional",
-      "recipes": [
-
-      ]
+      "default": "1"
     },
     "nginx/worker_connections": {
       "display_name": "Nginx Worker Connections",
       "description": "Number of connections per worker",
-      "default": "1024",
-      "choice": [
-
-      ],
-      "calculated": false,
-      "type": "string",
-      "required": "optional",
-      "recipes": [
-
-      ]
+      "default": "1024"
     },
     "nginx/server_names_hash_bucket_size": {
       "display_name": "Nginx Server Names Hash Bucket Size",
-      "default": "64",
-      "choice": [
-
-      ],
-      "calculated": false,
-      "type": "string",
-      "required": "optional",
-      "recipes": [
-
-      ]
+      "default": "64"
     },
     "nginx/types_hash_max_size": {
       "display_name": "Nginx Types Hash Max Size",
-      "default": "2048",
-      "choice": [
-
-      ],
-      "calculated": false,
-      "type": "string",
-      "required": "optional",
-      "recipes": [
-
-      ]
+      "default": "2048"
     },
     "nginx/types_hash_bucket_size": {
       "display_name": "Nginx Types Hash Bucket Size",
-      "default": "64",
-      "choice": [
-
-      ],
-      "calculated": false,
-      "type": "string",
-      "required": "optional",
-      "recipes": [
-
-      ]
+      "default": "64"
     },
     "nginx/disable_access_log": {
       "display_name": "Disable Access Log",
-      "default": "false",
-      "choice": [
-
-      ],
-      "calculated": false,
-      "type": "string",
-      "required": "optional",
-      "recipes": [
-
-      ]
+      "default": "false"
     },
     "nginx/default_site_enabled": {
       "display_name": "Default site enabled",
-      "default": "true",
-      "choice": [
-
-      ],
-      "calculated": false,
-      "type": "string",
-      "required": "optional",
-      "recipes": [
-
-      ]
+      "default": "true"
     },
     "nginx/sendfile": {
       "display_name": "Nginx sendfile",
       "description": "Whether to enable sendfile",
-      "default": "on",
-      "choice": [
-
-      ],
-      "calculated": false,
-      "type": "string",
-      "required": "optional",
-      "recipes": [
-
-      ]
-    },
-    "nginx/tcp_nopush": {
-      "display_name": "Nginx tcp_nopush",
-      "description": "Whether to enable tcp_nopush",
-      "default": "on",
-      "choice": [
-
-      ],
-      "calculated": false,
-      "type": "string",
-      "required": "optional",
-      "recipes": [
-
-      ]
-    },
-    "nginx/tcp_nodelay": {
-      "display_name": "Nginx tcp_nodelay",
-      "description": "Whether to enable tcp_nodelay",
-      "default": "on",
-      "choice": [
-
-      ],
-      "calculated": false,
-      "type": "string",
-      "required": "optional",
-      "recipes": [
-
-      ]
+      "default": "on"
     }
   },
   "groupings": {
-
   },
   "recipes": {
     "nginx": "Installs nginx package and sets up configuration with Debian apache style with sites-enabled/sites-available",
     "nginx::source": "Installs nginx from source and sets up configuration with Debian apache style with sites-enabled/sites-available"
-  },
-  "version": "2.7.6",
-  "source_url": "",
-  "issues_url": ""
+  }
 }

@@ -4,7 +4,7 @@
 #
 # Author:: AJ Christensen <aj@junglist.gen.nz>
 #
-# Copyright 2008-2013, Chef Software, Inc.
+# Copyright 2008-2013, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ directory node['nginx']['dir'] do
 end
 
 directory node['nginx']['log_dir'] do
-  mode      node['nginx']['log_dir_perm']
+  mode      '0755'
   owner     node['nginx']['user']
   action    :create
   recursive true
@@ -45,13 +45,5 @@ end
     owner 'root'
     group node['root_group']
     mode  '0755'
-  end
-end
-
-if !node['nginx']['default_site_enabled'] && (node['platform_family'] == 'rhel' || node['platform_family'] == 'fedora')
-  %w(default.conf example_ssl.conf).each do |config|
-    file "/etc/nginx/conf.d/#{config}" do
-      action :delete
-    end
   end
 end

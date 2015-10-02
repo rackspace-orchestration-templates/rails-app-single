@@ -2,7 +2,7 @@
 # Cookbook Name:: yum
 # Resource:: repository
 #
-# Author:: Sean OMeara <someara@chef.io>
+# Author:: Sean OMeara <someara@getchef.com>
 # Copyright 2013, Chef
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -44,7 +44,6 @@ attribute :color_update_local, :kind_of => String, :regex => /.*/, :default => n
 attribute :color_update_remote, :kind_of => String, :regex => /.*/, :default => nil
 attribute :commands, :kind_of => String, :regex => /.*/, :default => nil
 attribute :debuglevel, :kind_of => String, :regex => /^\d+$/, :default => '2'
-attribute :deltarpm, :kind_of => [TrueClass, FalseClass], :default => nil
 attribute :diskspacecheck, :kind_of => [TrueClass, FalseClass], :default => nil
 attribute :distroverpkg, :kind_of => String, :regex => /.*/, :default => nil
 attribute :enable_group_conditionals, :kind_of => [TrueClass, FalseClass], :default => nil
@@ -87,7 +86,6 @@ attribute :proxy_username, :kind_of => String, :regex => /.*/, :default => nil
 attribute :recent, :kind_of => String, :regex => /^\d+$/, :default => nil
 attribute :releasever, :kind_of => String, :regex => /.*/, :default => nil
 attribute :repo_gpgcheck, :kind_of => [TrueClass, FalseClass], :default => nil
-attribute :reposdir, :kind_of => String, :regex => /.*/, :default => nil
 attribute :reset_nice, :kind_of => [TrueClass, FalseClass], :default => nil
 attribute :rpmverbosity, :kind_of => String, :equal_to => %w(info critical emergency error warn debug), :default => nil
 attribute :showdupesfromrepos, :kind_of => [TrueClass, FalseClass], :default => nil

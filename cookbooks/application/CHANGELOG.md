@@ -3,13 +3,6 @@ application Cookbook CHANGELOG
 This file is used to list changes made in each version of the application cookbook.
 
 
-v4.1.6
-------
-- Support for Chef 12.
-- Add `strict_ssh` option to enable host key checking.
-- Add `keep_releases` option to control number of releases to keep.
-- Allow passing a path to a file for `deploy_key`.
-
 v4.1.4
 ------
 ### Bug

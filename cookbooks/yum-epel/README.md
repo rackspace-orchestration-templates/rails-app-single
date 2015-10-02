@@ -1,7 +1,5 @@
 yum-epel Cookbook
 ============
-[![Build Status](https://travis-ci.org/chef-cookbooks/yum-epel.svg?branch=master)](http://travis-ci.org/chef-cookbooks/yum-epel)
-[![Cookbook Version](https://img.shields.io/cookbook/v/yum-epel.svg)](https://supermarket.chef.io/cookbooks/yum-epel)
 
 The yum-epel cookbook takes over management of the default
 repositoryids shipped with epel-release. It allows attribute
@@ -10,16 +8,8 @@ manipulation of `epel`, `epel-debuginfo`, `epel-source`, `epel-testing`,
 
 Requirements
 ------------
-#### Platforms
-* RHEL/CentOS and derivatives
-* Fedora
-
-#### Chef
-* Chef 11+
-
-#### Cookbooks
-* yum version 3.2.0 or higher
-
+* Chef 11 or higher
+* yum cookbook version 3.0.0 or higher
 
 Attributes
 ----------
@@ -153,11 +143,11 @@ include_recipe 'yum-epel'
 
 License & Authors
 -----------------
+- Author:: Sean OMeara (<someara@opscode.com>)
 
-**Author:** Cookbook Engineering Team (<cookbooks@chef.io>)
+```text
+Copyright:: 2011-2013 Opscode, Inc.
 
-**Copyright:** 2011-2015, Chef Software, Inc.
-```
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at

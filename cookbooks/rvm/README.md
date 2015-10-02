@@ -134,7 +134,7 @@ cookbook dependencies. Include the cookbook in your Berksfile, and then run
 Include a reference to the cookbook in a [Cheffile][cheffile] and run
 `librarian-chef install`. To install Librarian-Chef:
 
-    gem install librarian-chef
+    gem install librarian
     cd chef-repo
     librarian-chef init
     cat >> Cheffile <<END_OF_CHEFFILE
@@ -253,7 +253,7 @@ The default Ruby for RVM installed system-wide. If the RVM Ruby is not
 installed, it will be built as a pre-requisite. The value can also contain a
 gemset in the form of `"ruby-1.8.7-p352@awesome"`.
 
-The default is `"ruby-1.9.3-p547"`. To disable a default Ruby from being
+The default is `"ruby-2.0.0-p0"`. To disable a default Ruby from being
 set, use an empty string (`""`) or a value of `"system"`.
 
 ### <a name="attributes-user-default-ruby"></a> user_default_ruby
@@ -262,7 +262,7 @@ The default Ruby for RVMs installed per-user when not explicitly set for that
 user. If the RVM Ruby is not installed, it will be built as a pre-requisite.
 The value can also contain a gemset in the form of `"ruby-1.8.7-p352@awesome"`.
 
-The default is `"ruby-1.9.3-p547"`. To disable a default Ruby from being
+The default is `"ruby-2.0.0-p0"`. To disable a default Ruby from being
 set, use an empty string (`""`) or a value of `"system"`.
 
 ### <a name="attributes-rubies"></a> rubies

@@ -1,9 +1,9 @@
 #
-# Author:: Seth Chisamore (<schisamo@chef.io>)
+# Author:: Seth Chisamore (<schisamo@opscode.com>)
 # Cookbook Name:: windows
 # Attribute:: default
 #
-# Copyright 2011, Chef Software, Inc
+# Copyright 2011, Opscode, Inc
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,6 +19,5 @@
 #
 
 default['windows']['allow_pending_reboots'] = true
-default['windows']['allow_reboot_on_failure'] = false
 default['windows']['rubyzipversion'] = nil
 default['windows']['reboot_timeout'] = 60

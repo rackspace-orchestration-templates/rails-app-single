@@ -1,22 +1,13 @@
-unicorn Cookbook
-================
-
-[![Build Status](https://travis-ci.org/opscode-cookbooks/unicorn.svg?branch=master)](https://travis-ci.org/opscode-cookbooks/unicorn)
-[![Cookbook Version](https://img.shields.io/cookbook/v/unicorn.svg)](https://supermarket.chef.io/cookbooks/unicorn)
+Description
+===========
 
 Installs and configures unicorn, and provides a definition to manage
 configuration file for Rack apps running under unicorn.
 
 Requirements
 ============
-### Platforms
-- Any platform the supports the unicorn gem
 
-### Chef
-* Chef 11+
-
-### Cookbooks
-- none
+Should work anywhere.
 
 Definitions
 ===========
@@ -67,7 +58,7 @@ Respectively.
 
 ### Examples:
 
-Setting some custom attributes in a recipe (this is from Chef's
+Setting some custom attributes in a recipe (this is from Opscode's
 `application::unicorn`.
 
     node.default[:unicorn][:worker_timeout] = 60
@@ -90,10 +81,9 @@ Setting some custom attributes in a recipe (this is from Chef's
 License and Author
 ==================
 
-- Author: Adam Jacob <adam@chef.io>
+- Author: Adam Jacob <adam@opscode.com>
 
-```text
-Copyright 2009-2015, Chef Software, Inc.
+- Copyright 2009-2013, Opscode, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -106,4 +96,3 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-```

@@ -29,7 +29,6 @@ def load_current_resource
   @current_resource.arguments(@link.Arguments)
   @current_resource.description(@link.Description)
   @current_resource.cwd(@link.WorkingDirectory)
-  @current_resource.iconlocation(@link.IconLocation)
 end
 
 # Check to see if the shorcut needs any changes
@@ -38,7 +37,7 @@ end
 # <true>:: If a change is required
 # <false>:: If the shorcuts are identical
 def compare_shortcut
-  [:target, :arguments, :description, :cwd, :iconlocation].any? do |attr|
+  [:target, :arguments, :description, :cwd].any? do |attr|
     !@new_resource.send(attr).nil? && @current_resource.send(attr) != @new_resource.send(attr)
   end
 end
@@ -49,8 +48,7 @@ def action_create
     @link.Arguments = @new_resource.arguments if @new_resource.arguments != nil
     @link.Description = @new_resource.description if @new_resource.description != nil
     @link.WorkingDirectory = @new_resource.cwd if @new_resource.cwd != nil
-    @link.IconLocation = @new_resource.iconlocation if @new_resource.iconlocation != nil
-    #ignoring: WindowStyle, Hotkey
+    #ignoring: WindowStyle, Hotkey, IconLocation
     @link.Save
     Chef::Log.info("Added #{@new_resource} shortcut")
     new_resource.updated_by_last_action(true)

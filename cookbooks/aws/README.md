@@ -16,6 +16,14 @@ not limited to:
 
 * [Route53](http://community.opscode.com/cookbooks/route53)
 
+**Note** This cookbook uses the `right_aws` RubyGem to interact with
+  the AWS API because at the time it was written, `fog` and `aws-sdk`
+  were not available. Further, both of those gems require `nokogiri`
+  which requires compiling native extensions, which means build tools
+  are required. We do not plan at this time to change the underlying
+  Ruby library used in order to limit the external dependencies for
+  this cookbook.
+
 Requirements
 ============
 
@@ -50,8 +58,7 @@ DataBag recommendation:
     {
       "id": "main",
       "aws_access_key_id": "YOUR_ACCESS_KEY",
-      "aws_secret_access_key": "YOUR_SECRET_ACCESS_KEY",
-      "aws_session_token": "YOUR_SESSION_TOKEN"
+      "aws_secret_access_key": "YOUR_SECRET_ACCESS_KEY"
     }
 
 This can be loaded in a recipe with:
@@ -62,7 +69,6 @@ And to access the values:
 
     aws['aws_access_key_id']
     aws['aws_secret_access_key']
-    aws['aws_session_token']
 
 We'll look at specific usage below.
 
@@ -107,8 +113,7 @@ For resource tags:
   "Statement": [
     {
       "Action": [
-        "ec2:CreateTags",
-        "ec2:DescribeTags"
+        "ec2:CreateTags"
       ],
       "Sid": "Stmt1381536708000",
       "Resource": [
@@ -126,7 +131,7 @@ Recipes
 default.rb
 ----------
 
-The default recipe installs the `aws-sdk` RubyGem, which this
+The default recipe installs the `right_aws` RubyGem, which this
 cookbook requires in order to work with the EC2 API. Make sure that
 the aws recipe is in the node or role `run_list` before any resources
 from this cookbook are used.
@@ -137,12 +142,6 @@ from this cookbook are used.
 
 The `gem_package` is created as a Ruby Object and thus installed
 during the Compile Phase of the Chef run.
-
-ec2_hints.rb
-------------
-
-This recipe is used to setup the ec2 hints for ohai in the case that an
-instance is not created using knife-ec2.
 
 Libraries
 =========
@@ -176,7 +175,7 @@ Actions:
 
 Attribute Parameters:
 
-* `aws_secret_access_key`, `aws_access_key` and optionally `aws_session_token` - passed to
+* `aws_secret_access_key`, `aws_access_key` - passed to
   `Opscode::AWS:Ec2` to authenticate required, unless using IAM roles for authentication.
 * `size` - size of the volume in gigabytes.
 * `snapshot_id` - snapshot to build EBS volume from.
@@ -192,11 +191,9 @@ Attribute Parameters:
 * `snapshots_to_keep` - used with action `:prune` for number of
   snapshots to maintain.
 * `description` - used to set the description of an EBS snapshot
-* `volume_type` - "standard", "io1", or "gp2" ("standard" is magnetic, "io1" is piops SSD, "gp2" is general purpose SSD)
+* `volume_type` - "standard" or "io1" (io1 is the type for IOPS volume)
 * `piops` - number of Provisioned IOPS to provision, must be >= 100
 * `existing_raid` - whether or not to assume the raid was previously assembled on existing volumes (default no)
-* `encrypted` - specify if the EBS should be encrypted
-* `kms_key_id` - the full ARN of the AWS Key Management Service (AWS KMS) master key to use when creating the encrypted volume (defaults to master key if not specified)
 
 ## ebs_raid.rb
 
@@ -204,7 +201,7 @@ Manage Elastic Block Store (EBS) raid devices with this resource.
 
 Attribute Parameters:
 
-* `aws_secret_access_key`, `aws_access_key` and optionally `aws_session_token` - passed to
+* `aws_secret_access_key`, `aws_access_key` - passed to
   `Opscode::AWS:Ec2` to authenticate, required.
 * `mount_point` - where to mount the RAID volume
 * `mount_point_owner` - the owner of the mount point (default root)
@@ -231,7 +228,7 @@ Actions:
 
 Attribute Parameters:
 
-* `aws_secret_access_key`, `aws_access_key` and optionally `aws_session_token` - passed to
+* `aws_secret_access_key`, `aws_access_key` - passed to
   `Opscode::AWS:Ec2` to authenticate, required, unless using IAM roles for authentication.
 * `ip` - the IP address.
 * `timeout` - connection timeout for EC2 API.
@@ -245,7 +242,7 @@ Actions:
 
 Attribute Parameters:
 
-* `aws_secret_access_key`, `aws_access_key` and optionally `aws_session_token` - passed to
+* `aws_secret_access_key`, `aws_access_key` - passed to
   `Opscode::AWS:Ec2` to authenticate, required, unless using IAM roles for authentication.
 * `name` - the name of the LB, required.
 
@@ -263,7 +260,7 @@ Actions:
 
 Attribute Parameters
 
-* `aws_secret_access_key`, `aws_access_key` and optionally `aws_session_token` - passed to
+* `aws_secret_access_key`, `aws_access_key` - passed to
   `Opscode::AWS:Ec2` to authenticate, required, unless using IAM roles for authentication.
 * `tags` - a hash of key value pairs to be used as resource tags,
   (e.g. `{ "Name" => "foo", "Environment" => node.chef_environment
@@ -271,18 +268,6 @@ Attribute Parameters
 * `resource_id` - resources whose tags will be modified. The value may
   be a single ID as a string or multiple IDs in an array. If no
   `resource_id` is specified the name attribute will be used.
-
-## instance_monitoring.rb
-
-Actions:
-
-* `enable` - Enable detailed CloudWatch monitoring for this instance (Default).
-* `disable` - Disable detailed CloudWatch monitoring for this instance.
-
-Attribute Parameters:
-
-* `aws_secret_access_key`, `aws_access_key` and optionally `aws_session_token` - passed to
-  `Opscode::AWS:Ec2` to authenticate, required, unless using IAM roles for authentication.
 
 Usage
 =====
@@ -427,20 +412,14 @@ is a wrapper around `remote_file` and supports the same resource attributes as `
     end
 
 
-## aws_instance_monitoring
-
-Allows detailed CloudWatch monitoring to be enabled for the current instance.
-
-    aws_instance_monitoring "enable detailed monitoring"
-
 License and Author
 ==================
 
-* Author:: Chris Walters (<cw@chef.io>)
-* Author:: AJ Christensen (<aj@chef.io>)
+* Author:: Chris Walters (<cw@opscode.com>)
+* Author:: AJ Christensen (<aj@opscode.com>)
 * Author:: Justin Huff (<jjhuff@mspin.net>)
 
-Copyright 2009-2015, Chef Software, Inc.
+Copyright 2009-2013, Opscode, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

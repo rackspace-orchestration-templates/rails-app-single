@@ -19,5 +19,5 @@
 if node['apache']['version'] == '2.4'
   apache_module 'authn_core'
 else
-  Chef::Log.info('Ignoring apache2::mod_authn_core. not available until apache 2.4')
+  log 'Ignoring apache2::mod_authn_core. not available until apache 2.4'
 end

@@ -1,68 +1,75 @@
-Mysql chef_gem Cookbook
+Cross Platform Cookbook
 =======================
 
-The Mysql chef_gem is a library cookbook that provides an LWRP for use
-in recipes. It provides a wrapper around `chef_gem` called
-`mysql_chef_gem`, that eases the installation process, collecting the
-prerequisites and side-stepping the compilation phase arms race.
+Making custom Chef resource cross platform.
 
 Scope
 -----
-This cookbook is concerned with the installation of the `mysql`
-Rubygem into Chef's gem path. Installation into other Ruby
-environments, or installation of related gems such as `mysql2`
+This cookbook is concerned with cross platform things.
+This cookbook does not do everything.
 
 Requirements
 ------------
 * Chef 11 or higher
 * Ruby 1.9 (preferably from the Chef full-stack installer)
- 
+
+Resources / Providers
+---------------------
+### crossplat_thing
+
+The `crossplat_thing` resource configures things.
+
+### Example
+
+    crossplat_thing 'default' do
+      action :create
+    end
+
+Recipes
+-------
+### crossplat::default
+
+This recipe calls a `crossplat_thing` resource, passing parameters
+from node attributes.
+
 Usage
 -----
-Place a dependency on the mysql cookbook in your cookbook's  metadata.rb
-```ruby
-depends 'mysql-chef_gem', '~> 1.0'
-```
+The `crossplat::server` recipe and `crossplat_thing` resources are
+designed to do things.
 
-Then, in a recipe:
+### run_list
 
-```ruby
-mysql_chef_gem 'default' do
-  action [:install]
-end
+Include `'recipe[crossplat::default]'`
 
-Resources Overview
-------------------
-### mysql_chef_gem
+### Wrapper cookbook
 
-The `mysql_chef_gem` resource the build dependencies and installation
-of the `mysql` rubygem into Chef's Ruby environment
+    node.default['crossplat']['an_attribute'] = 'Chef'
 
+    include_recipe 'crossplat::default'
 
-#### Example
-```ruby
-mysql_chef_gem 'default' do
-  gem_version '2.9.1'
-  connectors_url 'http://internal.computers.biz/mysql-connector-c-6.1.5-linux-glibc2.5-x86_64.tar.gz'
-  connectors_checksum '38dea02ea8593359037aef7df7df3d388c9baac3604635f398bae9e1e8eaa4d2'
-  action :install
-end
-```
+    ruby_block 'wat' do
+      notifies :restart, crossplat_thing[wat]'
+    end
 
-#### Parameters
-- `gem_version` - The version of the `mysql` Rubygem to install into
-  the Chef environment. Defaults to '2.9.1'
-- `connectors_url` - URL of a tarball containing pre-compiled MySQL
-  connector libraries  
-- `connectors_checksum` - sha256sum of the `connectors_url` tarball
+### Used directly in a recipe
 
-#### Actions
-- `:install` - Build and install the gem into the Chef environment
-- `:remove` - Delete the gem from the Chef environment
+    crossplat_thing 'wat' do
+      action :create
+    end
+
+    ruby_block 'wat' do
+      notifies :restart, crossplat_thing[wat]'
+    end
+
+Attributes
+----------
+
+    default['crossplat']['resource_name'] = 'default'
+    default['crossplat']['an_attribute'] = 'chef'
 
 License & Authors
 -----------------
-- Author:: Sean OMeara (<sean@chef.io>)
+- Author:: Sean OMeara (<someara@opscode.com>)
 
 ```text
 Copyright:: 2009-2014 Chef Software, Inc

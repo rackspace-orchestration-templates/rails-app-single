@@ -1,9 +1,9 @@
 #
-# Author:: Seth Chisamore <schisamo@chef.io>
+# Author:: Seth Chisamore <schisamo@opscode.com>
 # Cookbook Name:: chef_handler
 # Resource:: default
 #
-# Copyright:: 2011-2013, Chef Software, Inc <legal@chef.io>
+# Copyright:: 2011-2013, Opscode, Inc <legal@opscode.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.

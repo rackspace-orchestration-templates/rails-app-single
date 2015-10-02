@@ -4,7 +4,7 @@
 #
 # Author:: AJ Christensen <aj@junglist.gen.nz>
 #
-# Copyright 2008-2013, Chef Software, Inc.
+# Copyright 2008-2013, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,12 +21,11 @@
 
 template 'nginx.conf' do
   path   "#{node['nginx']['dir']}/nginx.conf"
-  source node['nginx']['conf_template']
-  cookbook node['nginx']['conf_cookbook']
+  source 'nginx.conf.erb'
   owner  'root'
   group  node['root_group']
   mode   '0644'
-  notifies :reload, 'service[nginx]', :delayed
+  notifies :reload, 'service[nginx]'
 end
 
 template "#{node['nginx']['dir']}/sites-available/default" do
@@ -34,7 +33,7 @@ template "#{node['nginx']['dir']}/sites-available/default" do
   owner  'root'
   group  node['root_group']
   mode   '0644'
-  notifies :reload, 'service[nginx]', :delayed
+  notifies :reload, 'service[nginx]'
 end
 
 nginx_site 'default' do

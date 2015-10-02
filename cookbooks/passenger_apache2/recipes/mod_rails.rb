@@ -6,7 +6,7 @@
 # Author:: Joshua Sierles (<joshua@37signals.com>)
 # Author:: Michael Hale (<mikehale@gmail.com>)
 #
-# Copyright:: 2009-2015, Chef Software, Inc
+# Copyright:: 2009, Opscode, Inc
 # Copyright:: 2009, 37signals
 # Coprighty:: 2009, Michael Hale
 #
@@ -24,13 +24,14 @@
 
 include_recipe 'passenger_apache2'
 
-template "#{node['apache']['dir']}/mods-available/passenger.load" do
-  cookbook 'passenger_apache2'
-  source 'passenger.load.erb'
-  owner 'root'
-  group 'root'
-  mode '0644'
-  only_if { platform_family?('debian') }
+if platform_family?('debian')
+  template "#{node['apache']['dir']}/mods-available/passenger.load" do
+    cookbook 'passenger_apache2'
+    source 'passenger.load.erb'
+    owner 'root'
+    group 'root'
+    mode 0644
+  end
 end
 
 # Allows proper default path if root path was overridden
@@ -41,7 +42,7 @@ template "#{node['apache']['dir']}/mods-available/passenger.conf" do
   source 'passenger.conf.erb'
   owner 'root'
   group 'root'
-  mode '0644'
+  mode 0644
 end
 
 apache_module 'passenger' do

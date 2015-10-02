@@ -8,13 +8,13 @@
 # Short-Description: initscript for runit-managed <%= @name %> service
 ### END INIT INFO
 
-# Author: Chef Software, Inc. <cookbooks@chef.io>
+# Author: Opscode, Inc. <cookbooks@opscode.com>
 
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="runit-managed <%= @name %>"
 NAME=<%= @name %>
-RUNIT=<%= @sv_bin %>
-SCRIPTNAME=<%= @init_dir %>$NAME
+RUNIT=/usr/bin/sv
+SCRIPTNAME=/etc/init.d/$NAME
 
 # Exit if runit is not installed
 [ -x $RUNIT ] || exit 0

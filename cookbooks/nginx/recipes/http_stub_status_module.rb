@@ -27,7 +27,7 @@ template 'nginx_status' do
   owner  'root'
   group  node['root_group']
   mode   '0644'
-  notifies :reload, 'service[nginx]', :delayed
+  notifies :reload, 'service[nginx]'
 end
 
 nginx_site 'nginx_status'

@@ -43,12 +43,11 @@ Configuration of framework-specific aspects of the application are performed by 
 - `path`: target path of the deployment; it will be created if it does not exist
 - `owner`: the user that shall own the target path
 - `group`: the group that shall own the target path
-- `keep_releases`: count of keep releases
 - `strategy`: the underlying LWRP that will be used to perform the deployment. The default is `:deploy_revision`, and it should never be necessary to change it
 - `scm_provider`: the provider class to use for the deployment. It defaults to `Chef::Provider::Git`, you can set it to `Chef::Provider::Subversion` to deploy from an SVN repository
 - `repository`: the URL of the repository the application should be checked out from
 - `revision`: an identifier pointing to the revision that should be checked out
-- `deploy_key`: the private key to use to access the repository via SSH, or path to a file containing the key
+- `deploy_key`: the private key to use to access the repository via SSH
 - `rollback_on_error`: if true, exceptions during a deployment will be caught and a clean rollback to the previous version will be attempted; the exception will then be re-raised. Defaults to true; change it only if you know what you are doing
 - `environment`: a Hash of environment variables to set while running migrations
 - `purge_before_symlink`: an Array of paths (relative to the checkout) to remove before creating symlinks
@@ -180,6 +179,7 @@ run_list([
   'recipe[my_app::default]'
 ])
 ```
+
 
 License and Authors
 -------------------

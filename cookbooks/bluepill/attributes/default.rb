@@ -1,7 +1,7 @@
 # Cookbook Name:: bluepill
 # Attributes:: default
 #
-# Copyright 2010-2015, Chef Software, Inc.
+# Copyright 2010, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,30 +15,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-default['bluepill']['bin'] = "#{node['languages']['ruby']['bin_dir']}/bluepill"
-default['bluepill']['logfile'] = '/var/log/bluepill.log'
-default['bluepill']['pid_dir'] = '/var/run/bluepill'
-default['bluepill']['state_dir'] = '/var/lib/bluepill'
-default['bluepill']['group'] = 0
-default['bluepill']['use_rsyslog'] = false
+default["bluepill"]["bin"] = "#{node['languages']['ruby']['bin_dir']}/bluepill"
+default["bluepill"]["logfile"] = "/var/log/bluepill.log"
+default["bluepill"]["pid_dir"] = "/var/run/bluepill"
+default["bluepill"]["state_dir"] = "/var/lib/bluepill"
+default["bluepill"]["group"] = 0
+default["bluepill"]["use_rsyslog"] = false
 
 case platform
-when 'arch'
-  default['bluepill']['init_dir'] = '/etc/rc.d'
-  default['bluepill']['conf_dir'] = '/etc/bluepill'
-  default['bluepill']['defaults_dir'] = '/etc/default'
-when 'freebsd'
-  default['bluepill']['init_dir'] = '/usr/local/etc/rc.d'
-  default['bluepill']['conf_dir'] = '/usr/local/etc/bluepill'
-  default['bluepill']['defaults_dir'] = '/etc/defaults'
+when "arch"
+  default["bluepill"]["init_dir"] = "/etc/rc.d"
+  default["bluepill"]["conf_dir"] = "/etc/bluepill"
+when "freebsd"
+  default["bluepill"]["init_dir"] = "/usr/local/etc/rc.d"
+  default["bluepill"]["conf_dir"] = "/usr/local/etc/bluepill"
 else
-  default['bluepill']['init_dir'] = '/etc/init.d'
-  default['bluepill']['conf_dir'] = '/etc/bluepill'
-end
-
-case platform
-when 'fedora', 'rhel'
-  default['bluepill']['defaults_dir'] = '/etc/sysconfig'
-when 'debian', 'ubuntu'
-  default['bluepill']['defaults_dir'] = '/etc/default'
+  default["bluepill"]["init_dir"] = "/etc/init.d"
+  default["bluepill"]["conf_dir"] = "/etc/bluepill"
 end
