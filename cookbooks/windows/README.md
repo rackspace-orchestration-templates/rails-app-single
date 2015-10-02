@@ -1,30 +1,34 @@
 Windows Cookbook
 ================
+[![Build Status](https://travis-ci.org/chef-cookbooks/windows.svg?branch=master)](http://travis-ci.org/chef-cookbooks/windows)
+[![Cookbook Version](https://img.shields.io/cookbook/v/windows.svg)](https://supermarket.chef.io/cookbooks/windows)
+
 Provides a set of Windows-specific primitives (Chef resources) meant to aid in the creation of cookbooks/recipes targeting the Windows platform.
 
 
 Requirements
 -------------
-Version 1.3.0+ of this cookbook requires Chef 0.10.10+.
+Chef 11+ is required to run this cookbook
 
 
 ### Platforms
-* Windows XP
 * Windows Vista
-* Windows Server 2003 R2
 * Windows 7
 * Windows Server 2008 (R1, R2)
+* Windows 8, 8.1
+* Windows Server 2012 (R2)
 
-The `windows_task` LWRP requires Windows Server 2008 due to its API usage.
+The `windows_task` LWRP requires Windows Server 2008 and above due to its API usage.
 
 ### Cookbooks
-The following cookbooks provided by Opscode are required as noted:
+The following cookbooks provided by Chef Software are required as noted:
 
 * chef_handler (`windows::reboot_handler` leverages the chef_handler LWRP)
 
 Attributes
 ----------
 * `node['windows']['allow_pending_reboots']` - used to configure the `WindowsRebootHandler` (via the `windows::reboot_handler` recipe) to act on pending reboots. default is true (ie act on pending reboots).  The value of this attribute only has an effect if the `windows::reboot_handler` is in a node's run list.
+* `node['windows']['allow_reboot_on_failure']` - used to register the `WindowsRebootHandler` (via the `windows::reboot_handler` recipe) as an exception handler too to act on reboots not only at the end of successful Chef runs, but even at the end of failed runs. default is false (ie reboot only after successful runs).  The value of this attribute only has an effect if the `windows::reboot_handler` is in a node's run list.
 
 
 Resource/Provider
@@ -52,7 +56,7 @@ end
 ```
 
 ### windows_batch
-(Chef 11.6.0 includes a built-in [batch](http://docs.opscode.com/resource_batch.html) resource, so use that in preference to `windows_batch` if possible.)
+This resource is now deprecated and will be removed in a future version of this cookbook.  Chef >= 11.6.0 includes a built-in [batch](http://docs.chef.io/resource_batch.html) resource.
 
 Execute a batch script using the cmd.exe interpreter (much like the script resources for bash, csh, powershell, perl, python and ruby). A temporary file is created and executed like other script resources, rather than run inline. By their nature, Script resources are not idempotent, as they are completely up to the user's imagination. Use the `not_if` or `only_if` meta parameters to guard the resource for idempotence.
 
@@ -89,6 +93,79 @@ windows_batch 'echo some env vars' do
 end
 ```
 
+### windows_certificate
+
+Installs a certificate into the Windows certificate store from a file, and grants read-only access to the private key for designated accounts.
+Due to current limitations in winrm, installing certificated remotely may not work if the operation requires a user profile.  Operations on the local machine store should still work.
+
+#### Actions
+- :create: creates or updates a certificate.
+- :delete: deletes a certificate.
+- :acl_add: adds read-only entries to a certificate's private key ACL.
+
+#### Attribute Parameters
+- source: name attribute. The source file (for create and acl_add), thumprint (for delete and acl_add) or subject (for delete).
+- pfx_password: the password to access the source if it is a pfx file.
+- private_key_acl: array of 'domain\account' entries to be granted read-only access to the certificate's private key. This is not idempotent.
+- store_name: the certificate store to maniplate. One of MY (default : personal store), CA (trusted intermediate store) or ROOT (trusted root store).
+- user_store: if false (default) then use the local machine store; if true then use the current user's store.
+
+#### Examples
+```ruby
+# Add PFX cert to local machine personal store and grant accounts read-only access to private key
+windows_certificate "c:/test/mycert.pfx" do
+	pfx_password	"password"
+	private_key_acl	["acme\fred", "pc\jane"]
+end
+```
+
+```ruby
+# Add cert to trusted intermediate store
+windows_certificate "c:/test/mycert.cer" do
+	store_name	"CA"
+end
+```
+
+```ruby
+# Remove all certicates matching the subject
+windows_certificate "me.acme.com" do
+	action :delete
+end
+```
+
+### windows_certificate_binding
+
+Binds a certificate to an HTTP port in order to enable TLS communication.
+
+#### Actions
+- :create: creates or updates a binding.
+- :delete: deletes a binding.
+
+#### Attribute Parameters
+- cert_name: name attribute. The thumprint(hash) or subject that identifies the certicate to be bound.
+- name_kind: indicates the type of cert_name. One of :subject (default) or :hash.
+- address: the address to bind against. Default is 0.0.0.0 (all IP addresses).
+- port: the port to bind against. Default is 443.
+- app_id: the GUID that defines the application that owns the binding. Default is the values used by IIS.
+- store_name: the store to locate the certificate in. One of MY (default : personal store), CA (trusted intermediate store) or ROOT (trusted root store).
+
+#### Examples
+```ruby
+# Bind the first certificate matching the subject to the default TLS port
+windows_certificate_binding "me.acme.com" do
+end
+```
+
+```ruby
+# Bind a cert from the CA store with the given hash to port 4334
+windows_certificate_binding "me.acme.com" do
+	cert_name	"d234567890a23f567c901e345bc8901d34567890"
+	name_kind	:hash
+	store_name	"CA"
+	port		4334
+end
+```
+
 ### windows_feature
 Windows Roles and Features can be thought of as built-in operating system packages that ship with the OS.  A server role is a set of software programs that, when they are installed and properly configured, lets a computer perform a specific function for multiple users or other computers within a network.  A Role can have multiple Role Services that provide functionality to the Role.  Role services are software programs that provide the functionality of a role. Features are software programs that, although they are not directly parts of roles, can support or augment the functionality of one or more roles, or improve the functionality of the server, regardless of which roles are installed.  Collectively we refer to all of these attributes as 'features'.
 
@@ -115,6 +192,7 @@ servermanagercmd -query
 #### Providers
 - **Chef::Provider::WindowsFeature::DISM**: Uses Deployment Image Servicing and Management (DISM) to manage roles/features.
 - **Chef::Provider::WindowsFeature::ServerManagerCmd**: Uses Server Manager to manage roles/features.
+- **Chef::Provider::WindowsFeaturePowershell**: Uses Powershell to manage roles/features. (see [COOK-3714](https://tickets.chef.io/browse/COOK-3714)
 
 #### Examples
 Enable the node as a DHCP Server
@@ -151,6 +229,58 @@ Disable Telnet client/server
   windows_feature feature do
     action :remove
   end
+end
+```
+
+Add SMTP Feature with powershell provider 
+
+```ruby
+windows_feature "smtp-server" do
+  action :install
+  all true
+  provider :windows_feature_powershell
+end
+```
+
+### windows_font
+Installs a font.
+
+Font files should be included in the cookbooks
+
+#### Actions
+- :install: install a font to the system fonts directory.
+
+#### Attribute Parameters
+- file: The name of the font file name to install. It should exist in the files/default directory of the cookbook you're calling windows_font from. Defaults to the resource name.
+
+#### Examples
+
+```ruby
+windows_font 'Code New Roman.otf'
+```
+
+### windows_http_acl
+Sets the Access Control List for an http URL to grant non-admin accounts permission to open HTTP endpoints.
+
+#### Actions
+- :create: creates or updates the ACL for a URL.
+- :delete: deletes the ACL from a URL.
+
+#### Attribute Parameters
+- url: the name of the url to be created/deleted.
+- user: the name (domain\user) of the user or group to be granted permission to the URL. Mandatory for create. Only one user or group can be granted permission so this replaces any previously defined entry.
+
+#### Examples
+
+```ruby
+windows_http_acl 'http://+:50051/' do
+	user 'pc\\fred'
+end
+```
+
+```ruby
+windows_http_acl 'http://+:50051/' do
+	action :delete
 end
 ```
 
@@ -348,6 +478,8 @@ end
 ```
 
 ### windows_reboot
+This resource is now deprecated and will be removed in a future version of this cookbook.  Chef >= 12.0.0 includes a built-in [reboot](http://docs.chef.io/resource_reboot.html) resource.
+
 Sets required data in the node's run_state to notify `WindowsRebootHandler` a reboot is requested.  If Chef run completes successfully a reboot will occur if the `WindowsRebootHandler` is properly registered as a report handler.  As an action of `:request` will cause a node to reboot every Chef run, this resource is usually notified by other resources...ie restart node after a package is installed (see example below).
 
 #### Actions
@@ -356,7 +488,7 @@ Sets required data in the node's run_state to notify `WindowsRebootHandler` a re
 
 #### Attribute Parameters
 - :timeout: Name attribute. timeout delay in seconds to wait before proceeding with the requested reboot. default is 60 seconds
-- :reason: comment on the reason for the reboot. default is 'Opscode Chef initiated reboot'
+- :reason: comment on the reason for the reboot. default is 'Chef Software Chef initiated reboot'
 
 #### Examples
 If the package installs, schedule a reboot at end of chef run
@@ -380,7 +512,7 @@ end
 ```
 
 ### windows_registry
-(Chef 11.6.0 includes a built-in [registry_key](http://docs.opscode.com/resource_registry_key.html) resource, so use that in preference to `windows_registry` if possible.)
+This resource is now deprecated and will be removed in a future version of this cookbook.  Chef >= 11.6.0 includes a built-in [registry_key](http://docs.chef.io/resource_registry_key.html) resource.
 
 Creates and modifies Windows registry keys.
 
@@ -440,6 +572,34 @@ windows_registry 'HKCU\Software\Test' do
 end
 ```
 
+### windows_shortcut
+Creates and modifies Windows shortcuts.
+
+#### Actions
+- :create: create or modify a windows shortcut
+
+#### Attribute Parameters
+- name: name attribute. The shortcut to create/modify.
+- target: what the shortcut links to
+- arguments: arguments to pass to the target when the shortcut is executed
+- description:
+- cwd: Working directory to used when the target is executed
+- iconlocation: Icon to use, in the format of ```"path, index"``` where index is which icon in that file to use (See [WshShortcut.IconLocation](https://msdn.microsoft.com/en-us/library/3s9bx7at.aspx))
+
+#### Examples
+
+Add a shortcut all users desktop:
+```ruby
+require 'win32ole'
+all_users_desktop = WIN32OLE.new("WScript.Shell").SpecialFolders("AllUsersDesktop")
+
+windows_shortcut "#{all_users_desktop}/Notepad.lnk" do
+    target "C:\\WINDOWS\\notepad.exe"
+    description "Launch Notepad"
+    iconlocation "C:\\windows\\notepad.exe, 0"
+end
+```
+
 #### Library Methods
 
 ```ruby
@@ -477,22 +637,28 @@ Creates, deletes or runs a Windows scheduled task. Requires Windows
 Server 2008 due to API usage.
 
 #### Actions
-- :create: creates a task
+- :create: creates a task (or updates existing if user or command has changed)
 - :delete: deletes a task
 - :run: runs a task
+- :end: ends a task
 - :change: changes the un/pw or command of a task
+- :enable: enable a task
+- :disable: disable a task
 
 #### Attribute Parameters
-- name: name attribute, The task name.
+- task_name: name attribute, The task name. ("Task Name" or "/Task Name")
+- force: When used with create, will update the task.
 - command: The command the task will run.
 - cwd: The directory the task will be run from.
-- user: The user to run the task as. (requires password)
+- user: The user to run the task as. (defaults to 'SYSTEM')
 - password: The user's password. (requires user)
 - run_level: Run with limited or highest privileges.
-- frequency: Frequency with which to run the task. (hourly, daily, ect.)
+- frequency: Frequency with which to run the task. (default is :hourly. Other valid values include :minute, :hourly, :daily, :weekly, :monthly, :once, :on_logon, :onstart, :on_idle) \*:once requires start_time
 - frequency_modifier: Multiple for frequency. (15 minutes, 2 days)
 - start_day: Specifies the first date on which the task runs. Optional string (MM/DD/YYYY)
-- start_time: Specifies the start time to run the task. Optional string (HH:mm)
+- start_time: Specifies the start time to run the task. Optional string (HH:mm) 24 Hour time
+- interactive_enabled: (Allow task to run interactively or non-interactively.  Requires user and password.)
+- day: For monthly or weekly tasks, the day(s) on which the task runs.  (MON - SUN, *, 1 - 31)
 
 #### Examples
 
@@ -501,8 +667,8 @@ Run Chef every 15 minutes
 windows_task 'Chef client' do
   user 'Administrator'
   password '$ecR3t'
-  cwd 'C:\chef\bin'
-  command 'chef-client -L C:\tmp\'
+  cwd 'C:\\chef\\bin'
+  command 'chef-client -L C:\\tmp\\'
   run_level :highest
   frequency :minute
   frequency_modifier 15
@@ -514,8 +680,8 @@ Update Chef Client task with new password and log location
 windows_task 'Chef client' do
   user 'Administrator'
   password 'N3wPassW0Rd'
-  cwd 'C:\chef\bin'
-  command 'chef-client -L C:\chef\logs\'
+  cwd 'C:\\chef\\bin'
+  command 'chef-client -L C:\\chef\\logs\\'
   action :change
 end
 ```
@@ -527,17 +693,32 @@ windows_task 'old task' do
 end
 ```
 
+Enable a task named 'Chef client'
+```ruby
+windows_task 'Chef client' do
+  action :enable
+end
+```
+
+Disable a task named 'Chef client'
+```ruby
+windows_task 'Chef client' do
+  action :disable
+end
+```
+
 ### windows_zipfile
-Most version of Windows do not ship with native cli utility for managing compressed files.  This resource provides a pure-ruby implementation for managing zip files. Be sure to use the `not_if` or `only_if` meta parameters to guard the resource for idempotence or action will be taken on the zip file every Chef run.
+Most version of Windows do not ship with native cli utility for managing compressed files.  This resource provides a pure-ruby implementation for managing zip files. Be sure to use the `not_if` or `only_if` meta parameters to guard the resource for idempotence or action will be taken every Chef run.
 
 #### Actions
 - :unzip: unzip a compressed file
+- :zip: zip a directory (recursively)
 
 #### Attribute Parameters
-- path: name attribute. The path where files will be unzipped to.
-- source: The source of the zip file. This can either be a URI or a local path.
-- overwrite: force an overwrite of the files if the already exists.
-- checksum: useful if source is remote, the SHA-256 checksum of the file--if the local file matches the checksum, Chef will not download it
+- path: name attribute. The path where files will be (un)zipped to.
+- source: source of the zip file (either a URI or local path) for :unzip, or directory to be zipped for :zip.
+- overwrite: force an overwrite of the files if they already exist.
+- checksum: for :unzip, useful if source is remote, if the local file matches the SHA-256 checksum, Chef will not download it.
 
 #### Examples
 
@@ -558,16 +739,62 @@ windows_zipfile 'c:/the_codez' do
 end
 ```
 
+Create a local zipfile
+```ruby
+windows_zipfile 'c:/foo/baz/the_codez.zip' do
+  source 'c:/the_codez'
+  action :zip
+end
+```
+
+Libraries
+-------------------------
+### WindowsHelper
+
+Helper that allows you to use helpful functions in windows
+
+#### installed_packages
+Returns a hash of all DisplayNames installed
+```ruby
+# usage in a recipe
+::Chef::Recipe.send(:include, Windows::Helper)
+hash_of_installed_packages = installed_packages
+```
+
+#### is_package_installed?
+- `package_name`: The name of the package you want to query to see if it is installed
+- `returns`: true if the package is installed, false if it the package is not installed
+
+Download a file if a package isn't installed
+```ruby
+# usage in a recipe to not download a file if package is already installed
+::Chef::Recipe.send(:include, Windows::Helper)
+is_win_sdk_installed = is_package_installed?('Windows Software Development Kit')
+
+remote_file 'C:\windows\temp\windows_sdk.zip' do
+  source 'http://url_to_download/windows_sdk.zip'
+  action :create_if_missing
+  not_if {is_win_sdk_installed}
+end
+```
+Do something if a package is installed
+```ruby
+# usage in a provider
+include Windows::Helper
+if is_package_installed?('Windows Software Development Kit')
+  # do something if package is installed
+end
+```
 
 Exception/Report Handlers
 -------------------------
 ### WindowsRebootHandler
-Required reboots are a necessary evil of configuring and managing Windows nodes.  This report handler (ie fires at the end of successful Chef runs) acts on requested (Chef initiated) or pending (as determined by the OS per configuration action we performed) reboots.  The `allow_pending_reboots` initialization argument should be set to false if you do not want the handler to automatically reboot a node if it has been determined a reboot is pending.  Reboots can still be requested explicitly via the `windows_reboot` LWRP.
+Required reboots are a necessary evil of configuring and managing Windows nodes.  This report handler (ie fires at the end of Chef runs) acts on requested (Chef initiated) or pending (as determined by the OS per configuration action we performed) reboots.  The `allow_pending_reboots` initialization argument should be set to false if you do not want the handler to automatically reboot a node if it has been determined a reboot is pending.  Reboots can still be requested explicitly via the `windows_reboot` LWRP.
 
 ### Initialization Arguments
 - `allow_pending_reboots`: indicator on whether the handler should act on a the Window's 'pending reboot' state. default is true
 - `timeout`: timeout delay in seconds to wait before proceeding with the reboot. default is 60 seconds
-- `reason`:  comment on the reason for the reboot. default is 'Opscode Chef initiated reboot'
+- `reason`:  comment on the reason for the reboot. default is 'Chef Software Chef initiated reboot'
 
 
 Windows ChefSpec Matchers
@@ -637,16 +864,18 @@ override_attributes(
 
 This will still allow a reboot to be explicitly requested via the `windows_reboot` LWRP.
 
+By default, the handler will only be registered as a report handler, meaning that it will only fire at the end of successful Chef runs. If the run fails, pending or requested reboots will be ignored. This can lead to a situation where some package was installed and notified a reboot request via the `windows_reboot` LWRP, and then the run fails for some unrelated reason, and the reboot request gets dropped because the resource that notified the reboot request will already be up-to-date at the next run and will not request a reboot again, and thus the requested reboot will never be performed. To change this behavior and register the handler as an exception handler that fires at the end of failed runs too, override `node['windows']['allow_reboot_on_failure']` and set the value to true.
+
 
 License & Authors
 -----------------
-- Author:: Seth Chisamore (<schisamo@opscode.com>)
+- Author:: Seth Chisamore (<schisamo@chef.io>)
 - Author:: Doug MacEachern (<dougm@vmware.com>)
 - Author:: Paul Morton (<pmorton@biaprotect.com>)
 - Author:: Doug Ireton (<doug.ireton@nordstrom.com>)
 
 ```text
-Copyright 2011-2013, Opscode, Inc.
+Copyright 2011-2015, Chef Software, Inc.
 Copyright 2010, VMware, Inc.
 Copyright 2011, Business Intelligence Associates, Inc
 Copyright 2012, Nordstrom, Inc.

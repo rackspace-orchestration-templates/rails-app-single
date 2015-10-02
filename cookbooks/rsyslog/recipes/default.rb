@@ -2,7 +2,7 @@
 # Cookbook Name:: rsyslog
 # Recipe:: default
 #
-# Copyright 2009-2013, Opscode, Inc.
+# Copyright 2009-2014, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+extend RsyslogCookbook::Helpers
 
 package 'rsyslog'
 package 'rsyslog-relp' if node['rsyslog']['use_relp']
@@ -31,10 +33,10 @@ directory "#{node['rsyslog']['config_prefix']}/rsyslog.d" do
   mode  '0755'
 end
 
-directory '/var/spool/rsyslog' do
-  owner 'root'
-  group 'root'
-  mode  '0755'
+directory node['rsyslog']['working_dir']  do
+  owner node['rsyslog']['user']
+  group node['rsyslog']['group']
+  mode  '0700'
 end
 
 # Our main stub which then does its own rsyslog-specific
@@ -84,14 +86,4 @@ if platform_family?('omnios')
   end
 end
 
-if node['platform'] == 'ubuntu' && node['platform_version'].to_f >= 12.04
-  service_provider = Chef::Provider::Service::Upstart
-else
-  service_provider = nil
-end
-
-service node['rsyslog']['service_name'] do
-  supports :restart => true, :reload => true, :status => true
-  action   [:enable, :start]
-  provider service_provider
-end
+declare_rsyslog_service

@@ -1,9 +1,9 @@
 #
-# Author:: Adam Jacob <adam@opscode.com>
+# Author:: Adam Jacob <adam@chef.io>
 # Cookbook Name:: unicorn
 # Recipe:: default
 #
-# Copyright 2009, Opscode, Inc.
+# Copyright 2009-2015, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,4 +18,6 @@
 # limitations under the License.
 #
 
-gem_package "unicorn"
+include_recipe 'build-essential'
+
+gem_package 'unicorn'

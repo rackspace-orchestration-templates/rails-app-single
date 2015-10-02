@@ -2,8 +2,8 @@
   "name": "rvm",
   "description": "Manages system-wide and per-user RVMs and manages installed Rubies. Several lightweight resources and providers (LWRP) are also defined.Installs and manages RVM. Includes several LWRPs.",
   "long_description": "Please refer to README.md (it's long).",
-  "maintainer": "Fletcher Nichol",
-  "maintainer_email": "fnichol@nichol.ca",
+  "maintainer": "Aaron Kalin",
+  "maintainer_email": "akalin@martinisoftware.com",
   "license": "Apache 2.0",
   "platforms": {
     "debian": ">= 0.0.0",
@@ -27,14 +27,19 @@
     "homebrew": ">= 0.0.0"
   },
   "conflicting": {
+
   },
   "providing": {
+
   },
   "replacing": {
+
   },
   "attributes": {
+
   },
   "groupings": {
+
   },
   "recipes": {
     "rvm": "Installs the RVM gem and initializes Chef to use the Lightweight Resources and Providers (LWRPs). Use this recipe explicitly if you only want access to the LWRPs provided.",
@@ -45,5 +50,7 @@
     "rvm::vagrant": "An optional recipe to help if running in a Vagrant virtual machine",
     "rvm::gem_package": "An experimental recipe that patches the gem_package resource"
   },
-  "version": "0.9.2"
+  "version": "0.9.4",
+  "source_url": "",
+  "issues_url": ""
 }
