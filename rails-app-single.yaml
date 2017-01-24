@@ -23,7 +23,6 @@ parameter_groups:
   - ruby_version
   - rails_environment
   - rails_app_server
-  - rails_db_type
   - rails_rake_tasks
   - app_git_url
   - app_git_revision
@@ -38,6 +37,8 @@ parameter_groups:
   - database_name
   - kitchen
   - chef_version
+  - rails_db_type
+
 
 parameters:
 
